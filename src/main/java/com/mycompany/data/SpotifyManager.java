@@ -3,6 +3,7 @@ package com.mycompany.data;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
+import com.wrapper.spotify.model_objects.special.SnapshotResult;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Paging;
@@ -74,6 +75,14 @@ public class SpotifyManager {
 
         } catch (SpotifyWebApiException | IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void addTracksToPlaylist(String id, String[] uris){
+        try {
+            SnapshotResult currentPlaylist = spotifyApi.addTracksToPlaylist(id, uris).build().execute();
+        } catch (IOException | SpotifyWebApiException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
