@@ -78,6 +78,10 @@ public class SpotifyManager {
         }
     }
     
+    public void createPlaylist(){
+        
+    }
+    
     public void addTracksToPlaylist(String id, String[] uris){
         try {
             SnapshotResult currentPlaylist = spotifyApi.addTracksToPlaylist(id, uris).build().execute();
