@@ -7,9 +7,11 @@ import com.wrapper.spotify.model_objects.special.SnapshotResult;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Paging;
+import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Recommendations;
 import com.wrapper.spotify.model_objects.specification.TrackSimplified;
 import com.wrapper.spotify.requests.data.browse.GetRecommendationsRequest;
+import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -78,7 +80,12 @@ public class SpotifyManager {
         }
     }
     
-    public void createPlaylist(){
+    public void createPlaylist(String id, String name){
+        try {
+            spotifyApi.createPlaylist(id, name).build().execute();
+        } catch (IOException | SpotifyWebApiException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     
