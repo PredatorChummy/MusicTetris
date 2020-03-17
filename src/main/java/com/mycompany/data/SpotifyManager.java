@@ -18,12 +18,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SpotifyManager {
-    
+
     private String client_id;
     private String client_secret;
     private SpotifyApi spotifyApi;
     GetRecommendationsRequest.Builder gmb;
-    
+
     public SpotifyManager(String client_id, String client_secret) {
         this.client_id = client_id;
         this.client_secret = client_secret;
@@ -34,61 +34,60 @@ public class SpotifyManager {
                 .min_popularity(10)
                 .target_popularity(20);
     }
-    
+
     private void authenticate() {
         try {
             this.spotifyApi = new SpotifyApi.Builder().setClientId(this.client_id).setClientSecret(this.client_secret).build();
             ClientCredentials cc = this.spotifyApi.clientCredentials().build().execute();
             this.spotifyApi.setAccessToken(cc.getAccessToken());
-            
+
         } catch (IOException | SpotifyWebApiException e) {
             e.printStackTrace();
         }
     }
-    
+
     public SpotifyApi getSpotifyApi() {
         return spotifyApi;
     }
-    
+
     public String getClient_id() {
         return client_id;
     }
-    
+
     public void setClient_id(String client_id) {
         this.client_id = client_id;
     }
-    
+
     public String getClient_secret() {
         return client_secret;
     }
-    
+
     public void setClient_secret(String client_secret) {
         this.client_secret = client_secret;
     }
-    
+
     public void searchAlbum(String name) {
         SearchAlbumsRequest album = this.spotifyApi.searchAlbums(name).build();
-        
+
         try {
             Paging<AlbumSimplified> albumSimplifiedPaging = album.execute();
             for (AlbumSimplified i : albumSimplifiedPaging.getItems()) {
                 System.out.println("album::" + i.getName());
             }
-            
+
         } catch (SpotifyWebApiException | IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     public void createPlaylist(String id, String name) {
         try {
             spotifyApi.createPlaylist(id, name).build().execute();
         } catch (IOException | SpotifyWebApiException ex) {
             Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
-    
+
     public void addTracksToPlaylist(String id, String[] uris) {
         try {
             spotifyApi.addTracksToPlaylist(id, uris).build().execute();
@@ -96,7 +95,7 @@ public class SpotifyManager {
             Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public ArrayList<String> getListCategories(CountryCode cc) {
         ArrayList<String> listOfCategories = new ArrayList<>();
         try {
@@ -109,7 +108,7 @@ public class SpotifyManager {
         }
         return listOfCategories;
     }
-    
+
     public void getRecommendation(String genre, CountryCode cc) {
         try {
             this.gmb.seed_genres(genre).market(cc);
@@ -119,10 +118,31 @@ public class SpotifyManager {
                     System.out.println(a.getName() + ":" + a.getId() + "\t" + t.getName() + ":" + t.getId() + "\t" + t.getUri());
                 }
             }
-            
         } catch (IOException | SpotifyWebApiException ex) {
             Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
+    }
+
+    public Paging<AlbumSimplified> getLatestReleases(CountryCode cc) {
+        Paging<AlbumSimplified> newReleases = null;
+        try {
+            newReleases = spotifyApi.getListOfNewReleases().country(cc).build().execute();
+        } catch (IOException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SpotifyWebApiException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return newReleases;
+    }
+
+    public Paging<TrackSimplified> getAlbumTracks(String id) {
+        Paging<TrackSimplified> tracks = null;
+        try {
+            tracks = spotifyApi.getAlbumsTracks(id).build().execute();
+        } catch (IOException | SpotifyWebApiException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return tracks;
     }
 }
