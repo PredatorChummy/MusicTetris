@@ -1,3 +1,4 @@
+package com.mycompany.processing;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.data.FloatDict;

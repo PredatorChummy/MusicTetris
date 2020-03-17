@@ -1,3 +1,5 @@
+package com.mycompany.processing;
+
 import processing.core.PApplet;
 
 public class Drop {
@@ -16,7 +18,7 @@ public class Drop {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.ySpeed = sketch.random(3,6);
+        this.ySpeed = sketch.random(3, 6);
         this.already_clicked = false;
     }
 
@@ -25,11 +27,12 @@ public class Drop {
     }
 
     public void render() {
-        if (already_clicked){
-            sketch.fill(50,205,50);
+        if (already_clicked) {
+            sketch.fill(50, 205, 50);
+        } else {
+            sketch.fill(255);
         }
-        else {sketch.fill(255);}
-        sketch.circle(x, y, size);
+        sketch.ellipse(x, y, size, size);
         sketch.fill(0);
         sketch.text(word, x, y);
         sketch.textAlign(sketch.CENTER, sketch.CENTER);
@@ -38,8 +41,8 @@ public class Drop {
     public void clicked() {
         float d = PApplet.dist(sketch.mouseX, sketch.mouseY, x, y);
         if (d < 16) {
-            sketch.fill(50,205,50);
-            sketch.circle(x, y, size);
+            sketch.fill(50, 205, 50);
+            sketch.ellipse(x, y, size, size);
             String world = word.replace("\n", " ");
             System.out.println(world);
         }
