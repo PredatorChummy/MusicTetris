@@ -5,7 +5,6 @@ import processing.core.PApplet;
 public class Drop {
 
     private PApplet sketch;
-
     private float x;
     private float y;
     private float size;

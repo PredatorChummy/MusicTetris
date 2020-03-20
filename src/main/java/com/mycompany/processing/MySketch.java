@@ -1,4 +1,5 @@
 package com.mycompany.processing;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.data.FloatDict;
@@ -11,7 +12,6 @@ import ddf.minim.*;
 import ddf.minim.signals.*;
 import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
-
 
 public class MySketch extends PApplet {
 
@@ -35,7 +35,8 @@ public class MySketch extends PApplet {
     FFT fft;
 
     public void settings() {
-        size(750, 750);smooth();
+        size(750, 750);
+        smooth();
     }
 
     public void setup() {
@@ -67,11 +68,11 @@ public class MySketch extends PApplet {
     }
 
     public void mousePressed() {
-        if (gameScreen==0) {
+        if (gameScreen == 0) {
             startGame();
         }
 
-        if (gameScreen==1) {
+        if (gameScreen == 1) {
             for (Drop plate : plates) {
                 plate.clicked();
                 savedName = plate.getWord().replace("\n", " ");
@@ -91,7 +92,7 @@ public class MySketch extends PApplet {
             }
         }
 
-        if (gameScreen==2) {
+        if (gameScreen == 2) {
             restart();
         }
     }
@@ -144,20 +145,21 @@ public class MySketch extends PApplet {
         }
     }
 
-    /********* SCREEN CONTENTS *********/
-
+    /**
+     * ******* SCREEN CONTENTS ********
+     */
     public void initScreen() {
         background(236, 240, 241);
         textAlign(CENTER);
         fill(52, 73, 94);
         textSize(70);
-        text("Music Tetris", width/2, height/2);
+        text("Music Tetris", width / 2, height / 2);
         textSize(15);
-        text("Click To Start", width/2, height-30);
+        text("Click To Start", width / 2, height - 30);
     }
 
     public void gameScreen() {
-        background(0,255,255);
+        background(0, 255, 255);
         for (Drop plate : plates) {
             plate.step();
             plate.render();
@@ -192,25 +194,25 @@ public class MySketch extends PApplet {
         }
     }
 
-
     public void gameOverScreen() {
         song[0].pause();
-        background(0,255,255);
+        background(0, 255, 255);
         fill(0);
         textSize(35);
-        text("Game Over", width/2, height/2);
+        text("Game Over", width / 2, height / 2);
         textAlign(CENTER, CENTER);
         textSize(20);
-        text("Score = " + str(score), width/2, height * 3/4);
+        text("Score = " + str(score), width / 2, height * 3 / 4);
         textSize(15);
-        text("Click To Restart", width/2, height-30);
+        text("Click To Restart", width / 2, height - 30);
     }
 
     public void startGame() {
-        gameScreen=1;
+        gameScreen = 1;
     }
+
     public void gameOver() {
-        gameScreen=2;
+        gameScreen = 2;
     }
 
     public void restart() {
@@ -228,14 +230,13 @@ public class MySketch extends PApplet {
     }
 
     public void checkTrue() {
-        if (    savedName.equals("Kevin Harris")   ||
-                savedName.equals("Oliver Mann")    ||
-                savedName.equals("Ben Scott")      ||
-                savedName.equals("Isaac Mac")      ||
-                savedName.equals("Robert Parrish")) {
+        if (savedName.equals("Kevin Harris")
+                || savedName.equals("Oliver Mann")
+                || savedName.equals("Ben Scott")
+                || savedName.equals("Isaac Mac")
+                || savedName.equals("Robert Parrish")) {
             increaseScore();
-        }
-        else {
+        } else {
             decreaseScore();
         }
     }
