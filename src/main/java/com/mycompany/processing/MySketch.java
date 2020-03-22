@@ -9,17 +9,26 @@ import java.util.List;
 import java.util.Random;
 
 import ddf.minim.*;
-import ddf.minim.signals.*;
 import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class MySketch extends PApplet {
 
-    public static void main(String[] args) {
-        String[] processingArgs = {"MySketch"};
-        MySketch mySketch = new MySketch();
-        PApplet.runSketch(processingArgs, mySketch);
-    }
+    HashMap<String, ArrayList<String>> genres_dict;
+    HashMap<String, String> albums_dict;
+    HashMap<String, String> artists_dict;
+    HashMap<String, ArrayList<String>> album_tracks_dict;
+    HashMap<String, ArrayList<String>> album_artists_dict;
+    HashMap<String, ArrayList<String>> gold_res;
+    
+    List<String> myArray;
 
     int gameScreen = 0;
     int score = 0;
@@ -30,7 +39,7 @@ public class MySketch extends PApplet {
     String savedName;
     Drop[] plates = new Drop[no_of_plates];
 
-    Minim minim;
+//    Minim minim;
     AudioPlayer[] song = new AudioPlayer[10];
     FFT fft;
 
@@ -40,21 +49,57 @@ public class MySketch extends PApplet {
     }
 
     public void setup() {
+        this.genres_dict = new HashMap<>();
+        this.albums_dict = new HashMap<>();
+        this.artists_dict = new HashMap<>();
+        this.album_tracks_dict = new HashMap<>();
+        this.album_artists_dict = new HashMap<>();
+        this.gold_res = new HashMap<>();
+
+        this.load_resources();
+        
+        this.myArray = new ArrayList<>();
+
+        for (Map.Entry<String, ArrayList<String>> entry : genres_dict.entrySet()) {
+            String key = entry.getKey();
+            ArrayList<String> artists_ids = entry.getValue();
+            
+            for (String artist : artists_ids) {
+                if (this.album_artists_dict.containsKey(artist)) {
+                    for (String album : this.album_artists_dict.get(artist)) {
+                        if (this.album_tracks_dict.containsKey(album)) {
+                            for (String track : this.album_tracks_dict.get(album)) {
+                                this.myArray.add(track);
+                                if (!this.gold_res.containsKey(track)) {
+                                    this.gold_res.put(track, new ArrayList<String>());
+                                }
+                                if (!this.gold_res.get(track).contains(key)) {
+                                    this.gold_res.get(track).add(key);
+//                                    System.out.println(this.gold_res.get(track));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+
         PFont f = createFont("Arial", 16, true);
         textFont(f, 12);
         rain(Round);
-        minim = new Minim(this);
+//        minim = new Minim(this);
 
-        song[0] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[1] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[2] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[3] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[4] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[5] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[6] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[7] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[8] = minim.loadFile("01 Radioactive.mp3", 2048);
-        song[9] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[0] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[1] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[2] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[3] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[4] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[5] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[6] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[7] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[8] = minim.loadFile("01 Radioactive.mp3", 2048);
+//        song[9] = minim.loadFile("01 Radioactive.mp3", 2048);
     }
 
     public void draw() {
@@ -98,17 +143,18 @@ public class MySketch extends PApplet {
     }
 
     public void rain(int round) {
+        int radius = 64;
         ArrayList<FloatDict> plate_pos = new ArrayList<>();
         while (plate_pos.size() < no_of_plates) {
             FloatDict plate_x = new FloatDict();
-            plate_x.set("x", random(32, width - 32));
+            plate_x.set("x", random(radius / 2, width - radius / 2));
             plate_x.set("y", random(-250, -100));
-            plate_x.set("r", 64);
+            plate_x.set("r", radius);
 
             boolean overlap = false;
             for (FloatDict others : plate_pos) {
                 float d = dist(plate_x.get("x"), plate_x.get("y"), others.get("x"), others.get("y"));
-                if (d < 64) {
+                if (d < radius) {
                     overlap = true;
                     break;
                 }
@@ -123,18 +169,7 @@ public class MySketch extends PApplet {
             }
         }
 
-        List<String> myArray = new ArrayList<>();
-        myArray.add("Kevin Harris");
-        myArray.add("Oliver Mann");
-        myArray.add("Ben Scott");
-        myArray.add("Isaac Mac");
-        myArray.add("Robert Parrish");
-        myArray.add("Mack Hammond");
-        myArray.add("Zach Bear");
-        myArray.add("Frankie Kole");
-        myArray.add("Dustin Hale");
-        myArray.add("Stanley Nova");
-
+        
         for (Drop drop : plates) {
             Random rand = new Random();
             int randomIndex = rand.nextInt(myArray.size());
@@ -165,8 +200,7 @@ public class MySketch extends PApplet {
             plate.render();
         }
 
-        song[currentSong].play();
-
+//        song[currentSong].play();
         String round = "Round = " + str(Round);
         fill(0);
         text(round, 700, 50);
@@ -195,7 +229,7 @@ public class MySketch extends PApplet {
     }
 
     public void gameOverScreen() {
-        song[0].pause();
+//        song[0].pause();
         background(0, 255, 255);
         fill(0);
         textSize(35);
@@ -230,11 +264,7 @@ public class MySketch extends PApplet {
     }
 
     public void checkTrue() {
-        if (savedName.equals("Kevin Harris")
-                || savedName.equals("Oliver Mann")
-                || savedName.equals("Ben Scott")
-                || savedName.equals("Isaac Mac")
-                || savedName.equals("Robert Parrish")) {
+        if (this.gold_res.get(savedName).contains("pop")) {
             increaseScore();
         } else {
             decreaseScore();
@@ -243,7 +273,82 @@ public class MySketch extends PApplet {
 
     public void incrementRound() {
         Round += 1;
-        song[currentSong].pause();
+//        song[currentSong].pause();
         currentSong += 1;
+    }
+
+    public void load_resources() {
+        String line = null;
+        try {
+            FileInputStream fis = new FileInputStream("data" + File.separator + "albums" + File.separator + "album_index.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.trim().split("\t");
+                albums_dict.put(tokens[1], tokens[0]);
+            }
+            br.close();
+            fis.close();
+
+            fis = new FileInputStream("data" + File.separator + "albums" + File.separator + "artist_index.txt");
+            br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.trim().split("\t");
+                artists_dict.put(tokens[1], tokens[0]);
+                if (tokens.length > 2) {
+                    for (String genre : tokens[2].trim().split("\\|")) {
+                        if (!this.genres_dict.containsKey(genre)) {
+                            this.genres_dict.put(genre, new ArrayList<>());
+                        }
+                        this.genres_dict.get(genre).add(tokens[1]);
+                    }
+                }
+            }
+            br.close();
+            fis.close();
+
+            fis = new FileInputStream("data" + File.separator + "albums" + File.separator + "album_track.txt");
+            br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.trim().split("\t");
+                if (!album_tracks_dict.containsKey(tokens[0])) {
+                    album_tracks_dict.put(tokens[0], new ArrayList<>());
+                }
+                album_tracks_dict.get(tokens[0]).add(tokens[2]);
+            }
+            br.close();
+            fis.close();
+
+            ArrayList<String> countries = new ArrayList<>();
+            countries.add("AU");
+            countries.add("GB");
+            countries.add("IE");
+            countries.add("US");
+
+            for (String country : countries) {
+                fis = new FileInputStream("data" + File.separator + "albums" + File.separator + country + "_album_artist.txt");
+                br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                while ((line = br.readLine()) != null) {
+                    String[] tokens = line.trim().split("\t");
+                    if (!album_artists_dict.containsKey(tokens[1])) {
+                        album_artists_dict.put(tokens[1], new ArrayList<>());
+                    }
+                    album_artists_dict.get(tokens[1]).add(tokens[0]);
+                }
+                br.close();
+                fis.close();
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void main(String[] args) {
+        String[] processingArgs = {"MySketch"};
+        MySketch mySketch = new MySketch();
+
+        PApplet.runSketch(processingArgs, mySketch);
     }
 }
