@@ -5,11 +5,13 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
+import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Category;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Recommendations;
 import com.wrapper.spotify.model_objects.specification.TrackSimplified;
+import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.browse.GetRecommendationsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import java.io.IOException;
@@ -78,6 +80,18 @@ public class SpotifyManager {
         } catch (SpotifyWebApiException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Artist getArtistDetails(String id) {
+        Artist res = null;
+        try {
+            res = this.spotifyApi.getArtist(id).build().execute();
+        } catch (IOException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SpotifyWebApiException ex) {
+            Logger.getLogger(SpotifyManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
     }
 
     public void createPlaylist(String id, String name) {
