@@ -1,6 +1,5 @@
 Top Lists
 Pop
-Summer
 Mood
 Hip-Hop
 Chill
@@ -11,7 +10,6 @@ Electronic/Dance
 Sleep
 Country
 Wellness
-Tastemakers
 Focus
 R&B
 Rock
@@ -19,12 +17,13 @@ Soul
 Romance
 Workout
 Folk & Acoustic
-K-Pop
 Kids & Family
 Dinner
 Metal
 Trending
+K-Pop
 Punk
+Tastemakers
 Arab
 Jazz
 Classical
@@ -38,3 +37,4 @@ Latin
 Comedy
 Funk
 Word
+Pride

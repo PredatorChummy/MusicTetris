@@ -3,21 +3,22 @@ Pop
 Workout
 Hip-Hop
 Rock
+Mood
 R&B
 Electronic/Dance
-Mood
+Wellness
 Indie
 Party
 Throwback
 Chill
 Tastemakers
 Sleep
-Wellness
 Spotify Singles
 Classical
 Black history is now
 Pride
 Romance
+Country
 Desi
 Jazz
 Trending
@@ -28,7 +29,6 @@ Folk & Acoustic
 Gaming
 Afro
 Arab
-Country
 Reggae
 Metal
 Student
