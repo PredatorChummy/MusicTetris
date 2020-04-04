@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import processing.core.PVector;
+
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import java.io.BufferedReader;
@@ -38,6 +40,20 @@ public class MySketch extends PApplet {
     int no_of_plates = 5;
     String savedName;
     Drop[] plates = new Drop[no_of_plates];
+    
+    String [] languages = {"JAVA", "PHP", "JAVASCRIPT", "C/C++", "COBOL", 
+  "VISUAL BASIC", "REBOL", "FORTRAN", "ADA"};
+
+int N_LANGUAGES = languages.length;
+    
+    int BLUE_COLOR = color(52, 73, 94);
+
+    
+    int ball_size = 30;
+    PVector [] posi;
+    int current_choice = 0;
+    
+    
 
 //    Minim minim;
     AudioPlayer[] song = new AudioPlayer[10];
@@ -47,6 +63,8 @@ public class MySketch extends PApplet {
         size(750, 750);
         smooth();
     }
+    
+    boolean rectOver = false;
 
     public void setup() {
         this.genres_dict = new HashMap<>();
@@ -100,29 +118,51 @@ public class MySketch extends PApplet {
 //        song[7] = minim.loadFile("01 Radioactive.mp3", 2048);
 //        song[8] = minim.loadFile("01 Radioactive.mp3", 2048);
 //        song[9] = minim.loadFile("01 Radioactive.mp3", 2048);
+
+    posi = new PVector[N_LANGUAGES];
+
+      for (int i = 0; i < N_LANGUAGES; i++) {
+        posi[i] = new PVector(width/2, 175 + (i * 50) );
+      }
     }
 
     public void draw() {
         if (gameScreen == 0) {
             initScreen();
         } else if (gameScreen == 1) {
-            gameScreen();
+            menuScreen();
         } else if (gameScreen == 2) {
+            gameScreen();
+        } else if (gameScreen == 3) {
             gameOverScreen();
         }
     }
 
     public void mousePressed() {
         if (gameScreen == 0) {
-            startGame();
+            startMenu();
+        }
+        
+        if (gameScreen == 1) {
+            
+            if (rectOver) {
+                gameScreen = 2;
+            }
+            
+            for (int i = 0; i < N_LANGUAGES; i++) {
+                if ( mouseX > (posi[i].x - 60) - (ball_size / 2) && mouseX < (posi[i].x - 60) + (ball_size / 2) &&
+                  mouseY > posi[i].y - (ball_size / 2) && mouseY < posi[i].y + (ball_size / 2)  ) {
+                  current_choice = i;
+                }
+            }
         }
 
-        if (gameScreen == 1) {
+        if (gameScreen == 2) {
             for (Drop plate : plates) {
                 plate.clicked();
                 savedName = plate.getWord().replace("\n", " ");
                 float ds = PApplet.dist(mouseX, mouseY, plate.getX(), plate.getY());
-                if (ds < 16) {
+                if (ds < 32) {
                     plate.already_clicked = true;
                     checkTrue();
                 }
@@ -137,7 +177,7 @@ public class MySketch extends PApplet {
             }
         }
 
-        if (gameScreen == 2) {
+        if (gameScreen == 3) {
             restart();
         }
     }
@@ -192,6 +232,63 @@ public class MySketch extends PApplet {
         textSize(15);
         text("Click To Start", width / 2, height - 30);
     }
+    
+    public void menuScreen() {
+        background(236, 240, 241);;
+        
+        textAlign(CENTER);
+        fill(BLUE_COLOR);
+        textSize(50);
+        text("Pick A Genre", width / 2, 100);
+        
+        textSize(15);
+        for (int i = 0; i < N_LANGUAGES; i++) {
+          fill(BLUE_COLOR);
+          text(languages[i], posi[i].x + ball_size, posi[i].y + 5);
+
+          noFill();
+          stroke(BLUE_COLOR);
+          strokeWeight(2);
+          ellipse((posi[i].x - 60), posi[i].y, ball_size, ball_size);
+
+          if (i == current_choice) {
+                noStroke();
+                fill(BLUE_COLOR);
+                ellipse((posi[i].x - 60), posi[i].y, (ball_size - 7), (ball_size - 7));
+            }
+        }
+        startButtonforGame();
+    }
+        
+    public void startButtonforGame() {
+          noStroke();
+          rectMode(CENTER); 
+          fill(BLUE_COLOR);
+          int rect_width = 200;
+          int rect_height = 50;
+          int rect_pos_x = width/2;
+          int rect_pos_y = height - 75;
+          rect(rect_pos_x, rect_pos_y, rect_width, rect_height);
+          
+          textSize(15);
+          fill(236, 240, 241);
+          text("Click to Start Game", rect_pos_x, height - 70);
+          
+          if (overRect(rect_pos_x, rect_pos_y, rect_width, rect_height)) {
+              rectOver = true;
+          }
+          else {
+              rectOver = false;
+          }
+    }
+    
+    public boolean overRect(int x, int y, int width, int height) {
+        if (mouseX >= x-width/2 && mouseX <= x+width/2 && mouseY >= y-height/2 && mouseY <= y+height/2) {
+            return true;
+          } else {
+            return false;
+        }
+    }
 
     public void gameScreen() {
         background(0, 255, 255);
@@ -241,12 +338,16 @@ public class MySketch extends PApplet {
         text("Click To Restart", width / 2, height - 30);
     }
 
-    public void startGame() {
+    public void startMenu() {
         gameScreen = 1;
+    }
+    
+    public void startGame() {
+        gameScreen = 2;
     }
 
     public void gameOver() {
-        gameScreen = 2;
+        gameScreen = 3;
     }
 
     public void restart() {
@@ -344,6 +445,7 @@ public class MySketch extends PApplet {
         }
 
     }
+   
 
     public static void main(String[] args) {
         String[] processingArgs = {"MySketch"};
