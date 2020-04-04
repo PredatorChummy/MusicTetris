@@ -29,7 +29,7 @@ public class MySketch extends PApplet {
     HashMap<String, ArrayList<String>> album_tracks_dict;
     HashMap<String, ArrayList<String>> album_artists_dict;
     HashMap<String, ArrayList<String>> gold_res;
-    
+
     List<String> myArray;
 
     int gameScreen = 0;
@@ -40,20 +40,14 @@ public class MySketch extends PApplet {
     int no_of_plates = 5;
     String savedName;
     Drop[] plates = new Drop[no_of_plates];
-    
-    String [] languages = {"JAVA", "PHP", "JAVASCRIPT", "C/C++", "COBOL", 
-  "VISUAL BASIC", "REBOL", "FORTRAN", "ADA"};
 
-int N_LANGUAGES = languages.length;
-    
+    ArrayList<String> genres;
+
     int BLUE_COLOR = color(52, 73, 94);
 
-    
     int ball_size = 30;
-    PVector [] posi;
+    PVector[] posi;
     int current_choice = 0;
-    
-    
 
 //    Minim minim;
     AudioPlayer[] song = new AudioPlayer[10];
@@ -63,7 +57,7 @@ int N_LANGUAGES = languages.length;
         size(750, 750);
         smooth();
     }
-    
+
     boolean rectOver = false;
 
     public void setup() {
@@ -73,15 +67,16 @@ int N_LANGUAGES = languages.length;
         this.album_tracks_dict = new HashMap<>();
         this.album_artists_dict = new HashMap<>();
         this.gold_res = new HashMap<>();
+        this.genres = new ArrayList<String>();
 
         this.load_resources();
-        
+
         this.myArray = new ArrayList<>();
 
         for (Map.Entry<String, ArrayList<String>> entry : genres_dict.entrySet()) {
             String key = entry.getKey();
             ArrayList<String> artists_ids = entry.getValue();
-            
+
             for (String artist : artists_ids) {
                 if (this.album_artists_dict.containsKey(artist)) {
                     for (String album : this.album_artists_dict.get(artist)) {
@@ -101,7 +96,6 @@ int N_LANGUAGES = languages.length;
                 }
             }
         }
-        
 
         PFont f = createFont("Arial", 16, true);
         textFont(f, 12);
@@ -118,12 +112,11 @@ int N_LANGUAGES = languages.length;
 //        song[7] = minim.loadFile("01 Radioactive.mp3", 2048);
 //        song[8] = minim.loadFile("01 Radioactive.mp3", 2048);
 //        song[9] = minim.loadFile("01 Radioactive.mp3", 2048);
+        posi = new PVector[this.genres.size()];
 
-    posi = new PVector[N_LANGUAGES];
-
-      for (int i = 0; i < N_LANGUAGES; i++) {
-        posi[i] = new PVector(width/2, 175 + (i * 50) );
-      }
+        for (int i = 0; i < this.genres.size(); i++) {
+            posi[i] = new PVector(width / 2, 175 + (i * 50));
+        }
     }
 
     public void draw() {
@@ -142,17 +135,17 @@ int N_LANGUAGES = languages.length;
         if (gameScreen == 0) {
             startMenu();
         }
-        
+
         if (gameScreen == 1) {
-            
+
             if (rectOver) {
                 gameScreen = 2;
             }
-            
-            for (int i = 0; i < N_LANGUAGES; i++) {
-                if ( mouseX > (posi[i].x - 60) - (ball_size / 2) && mouseX < (posi[i].x - 60) + (ball_size / 2) &&
-                  mouseY > posi[i].y - (ball_size / 2) && mouseY < posi[i].y + (ball_size / 2)  ) {
-                  current_choice = i;
+
+            for (int i = 0; i < this.genres.size(); i++) {
+                if (mouseX > (posi[i].x - 60) - (ball_size / 2) && mouseX < (posi[i].x - 60) + (ball_size / 2)
+                        && mouseY > posi[i].y - (ball_size / 2) && mouseY < posi[i].y + (ball_size / 2)) {
+                    current_choice = i;
                 }
             }
         }
@@ -209,7 +202,6 @@ int N_LANGUAGES = languages.length;
             }
         }
 
-        
         for (Drop drop : plates) {
             Random rand = new Random();
             int randomIndex = rand.nextInt(myArray.size());
@@ -232,26 +224,26 @@ int N_LANGUAGES = languages.length;
         textSize(15);
         text("Click To Start", width / 2, height - 30);
     }
-    
+
     public void menuScreen() {
         background(236, 240, 241);;
-        
+
         textAlign(CENTER);
         fill(BLUE_COLOR);
         textSize(50);
         text("Pick A Genre", width / 2, 100);
-        
+
         textSize(15);
-        for (int i = 0; i < N_LANGUAGES; i++) {
-          fill(BLUE_COLOR);
-          text(languages[i], posi[i].x + ball_size, posi[i].y + 5);
+        for (int i = 0; i < this.genres.size(); i++) {
+            fill(BLUE_COLOR);
+            text(this.genres.get(i), posi[i].x + ball_size, posi[i].y + 5);
 
-          noFill();
-          stroke(BLUE_COLOR);
-          strokeWeight(2);
-          ellipse((posi[i].x - 60), posi[i].y, ball_size, ball_size);
+            noFill();
+            stroke(BLUE_COLOR);
+            strokeWeight(2);
+            ellipse((posi[i].x - 60), posi[i].y, ball_size, ball_size);
 
-          if (i == current_choice) {
+            if (i == current_choice) {
                 noStroke();
                 fill(BLUE_COLOR);
                 ellipse((posi[i].x - 60), posi[i].y, (ball_size - 7), (ball_size - 7));
@@ -259,33 +251,32 @@ int N_LANGUAGES = languages.length;
         }
         startButtonforGame();
     }
-        
+
     public void startButtonforGame() {
-          noStroke();
-          rectMode(CENTER); 
-          fill(BLUE_COLOR);
-          int rect_width = 200;
-          int rect_height = 50;
-          int rect_pos_x = width/2;
-          int rect_pos_y = height - 75;
-          rect(rect_pos_x, rect_pos_y, rect_width, rect_height);
-          
-          textSize(15);
-          fill(236, 240, 241);
-          text("Click to Start Game", rect_pos_x, height - 70);
-          
-          if (overRect(rect_pos_x, rect_pos_y, rect_width, rect_height)) {
-              rectOver = true;
-          }
-          else {
-              rectOver = false;
-          }
+        noStroke();
+        rectMode(CENTER);
+        fill(BLUE_COLOR);
+        int rect_width = 200;
+        int rect_height = 50;
+        int rect_pos_x = width / 2;
+        int rect_pos_y = height - 75;
+        rect(rect_pos_x, rect_pos_y, rect_width, rect_height);
+
+        textSize(15);
+        fill(236, 240, 241);
+        text("Click to Start Game", rect_pos_x, height - 70);
+
+        if (overRect(rect_pos_x, rect_pos_y, rect_width, rect_height)) {
+            rectOver = true;
+        } else {
+            rectOver = false;
+        }
     }
-    
+
     public boolean overRect(int x, int y, int width, int height) {
-        if (mouseX >= x-width/2 && mouseX <= x+width/2 && mouseY >= y-height/2 && mouseY <= y+height/2) {
+        if (mouseX >= x - width / 2 && mouseX <= x + width / 2 && mouseY >= y - height / 2 && mouseY <= y + height / 2) {
             return true;
-          } else {
+        } else {
             return false;
         }
     }
@@ -341,7 +332,7 @@ int N_LANGUAGES = languages.length;
     public void startMenu() {
         gameScreen = 1;
     }
-    
+
     public void startGame() {
         gameScreen = 2;
     }
@@ -407,6 +398,11 @@ int N_LANGUAGES = languages.length;
             br.close();
             fis.close();
 
+            // populating the genres
+            for (String g : this.genres_dict.keySet()) {
+                this.genres.add(g);
+            }
+
             fis = new FileInputStream("data" + File.separator + "albums" + File.separator + "album_track.txt");
             br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
             while ((line = br.readLine()) != null) {
@@ -445,7 +441,6 @@ int N_LANGUAGES = languages.length;
         }
 
     }
-   
 
     public static void main(String[] args) {
         String[] processingArgs = {"MySketch"};
